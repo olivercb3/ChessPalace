@@ -12,5 +12,10 @@
   },
   "devDependencies": {
     "decentraland-ecs": "latest"
+  },
+  "dependencies": {
+    "@chrisoakman/chessboardjs": "^1.0.0",
+    "chess.ts": "^0.16.2",
+    "chessground": "^8.2.0"
   }
 }
