@@ -1,7 +1,6 @@
 import { Chess } from '../node_modules/chess.ts/src/chess'
 import {Chessground} from '../node_modules/chessground/src/chessground'
-import { canvasContainer } from './chessboard'
-import { chessBoard } from './chessboard'
+import { canvasContainer, chessBoard, closeButton, whiteKing, blackKing, whitePawns} from './chessboard'
 
 class RotatorSystem {
   // this group will contain every entity that has a Transform component
@@ -40,26 +39,33 @@ function spawnCube(x: number, y: number, z: number) {
   return cube
 }
 
-/// --- Spawn a cube ---
-
 const cube = spawnCube(8, 1, 8)
 
 cube.addComponent(
   new OnPointerDown(() => {
     cube.getComponent(Transform).scale.z *= 1.1
     cube.getComponent(Transform).scale.x *= 0.9
-  
-    // spawnCube(Math.random() * 8 + 1, Math.random() * 8, Math.random() * 8 + 1)
     canvasContainer.visible = true;
     chessBoard.visible = true;
+    setBoardVisibility(true)
   })
 )
 
+closeButton.onClick = new OnPointerDown(() => {
+  setBoardVisibility(false)
+})
+
 const chess = new Chess()
-const canvas = new UICanvas()
 
-// Create a textShape component, setting the canvas as parent
-// const text = new UIText(canvas)
-// text.value = chess.fen()
-
+//sets all the canvas elements visibility to type's value
+function setBoardVisibility(type: boolean){
+  canvasContainer.visible = type;
+  chessBoard.visible = type;
+  closeButton.visible = type;
+  whiteKing.visible = type;
+  blackKing.visible = type;
+  whitePawns.forEach( (element) => {
+    element.visible = type
+});
+}
 
