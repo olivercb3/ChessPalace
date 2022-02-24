@@ -49,7 +49,7 @@ closeButton.vAlign="top"
 closeButton.positionX="-240"
 
 export const whitePawns: UIImage[] = []
-pawnXPosition = "-224"
+let ascii_code = 'a'.charCodeAt(0) 
 for (let i = 0; i < 8; i++){
     const whitePawn = new UIImage(canvas, new Texture("images/chessboard/white-pawn.png"))
     whitePawn.visible = false
@@ -59,14 +59,13 @@ for (let i = 0; i < 8; i++){
     whitePawn.sourceTop = 0
     whitePawn.sourceWidth = 60
     whitePawn.sourceHeight = 78
-    whitePawn.positionY="-160"
-    whitePawn.positionX=pawnXPosition
+    whitePawn.positionY=squareMap[String.fromCharCode(ascii_code)+'2'].yPosition
+    whitePawn.positionX=squareMap[String.fromCharCode(ascii_code)+'2'].xPosition
     whitePawns.push(whitePawn)
-    pawnXPosition = (parseInt(pawnXPosition) + 64).toString()
+    ascii_code++;
 }
 
 export const whiteKnights: UIImage[] = []
-pawnXPosition = "-224"
 for (let i = 0; i < 2; i++){
     const whiteKnight = new UIImage(canvas, new Texture("images/chessboard/white-pawn.png"))
     whiteKnight.visible = false
@@ -76,10 +75,9 @@ for (let i = 0; i < 2; i++){
     whiteKnight.sourceTop = 0
     whiteKnight.sourceWidth = 60
     whiteKnight.sourceHeight = 78
-    whiteKnight.positionY="-224"
-    whiteKnight.positionX=pawnXPosition
-    whitePawns.push(whitePawn)
-    pawnXPosition = (parseInt(pawnXPosition) + 64).toString()
+    whiteKnight.positionY=squareMap['e1'].yPosition
+    whiteKnight.positionX=squareMap['e1'].xPosition
+    whiteKnights.push(whiteKnight)
 }
 
 export const whiteKing = new UIImage(canvas, new Texture("images/chessboard/white-king.png"))
@@ -90,8 +88,8 @@ whiteKing.sourceLeft = 0
 whiteKing.sourceTop = 0
 whiteKing.sourceWidth = 87
 whiteKing.sourceHeight = 85
-whiteKing.positionY="-224"
-whiteKing.positionX="32"
+whiteKing.positionY=squareMap['e1'].yPosition
+whiteKing.positionX=squareMap['e1'].xPosition
 
 export const blackKing = new UIImage(canvas, new Texture("images/chessboard/black-king.png"))
 blackKing.visible = false
@@ -105,7 +103,7 @@ blackKing.positionY="+224"
 blackKing.positionX="32"
 
 export const blackPawns: UIImage[] = []
-pawnXPosition = "-224"
+ascii_code = 'a'.charCodeAt(0) 
 for (let i = 0; i < 8; i++){
     const blackPawn = new UIImage(canvas, new Texture("images/chessboard/white-pawn.png"))
     blackPawn.visible = false
@@ -115,8 +113,8 @@ for (let i = 0; i < 8; i++){
     blackPawn.sourceTop = 0
     blackPawn.sourceWidth = 60
     blackPawn.sourceHeight = 78
-    blackPawn.positionY="+160"
-    blackPawn.positionX=pawnXPosition
+    blackPawn.positionY=squareMap[String.fromCharCode(ascii_code)+'7'].yPosition
+    blackPawn.positionX=squareMap[String.fromCharCode(ascii_code)+'7'].xPosition
     blackPawns.push(blackPawn)
-    pawnXPosition = (parseInt(pawnXPosition) + 64).toString()
+    ascii_code++;
 }

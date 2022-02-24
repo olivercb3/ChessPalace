@@ -1,6 +1,6 @@
 import { Chess } from '../node_modules/chess.ts/src/chess'
 import {Chessground} from '../node_modules/chessground/src/chessground'
-import { canvasContainer, chessBoard, closeButton, whiteKing, blackKing, whitePawns, blackPawns} from './chessboard'
+import { canvasContainer, chessBoard, closeButton, whiteKing, blackKing, whitePawns, blackPawns, squareMap} from './chessboard'
 
 class RotatorSystem {
   // this group will contain every entity that has a Transform component
