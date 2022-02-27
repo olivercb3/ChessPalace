@@ -17,7 +17,6 @@ export const squareMap:{[squareName: string]: ISquare} = {
     "g1":{xPosition:160 ,  yPosition:-224},  "g2": { xPosition:160 ,  yPosition:-160},  "g3":{ xPosition:160 , yPosition:-96},   "g4":{ xPosition:160 , yPosition:-32},  "g5":{ xPosition:160 , yPosition:32},  "g6":{ xPosition:160 , yPosition:96},  "g7":{ xPosition:160 ,  yPosition:160},  "g8":{ xPosition:160 , yPosition:224},
     "h1":{xPosition:224 ,  yPosition:-224},  "h2": { xPosition:224 ,  yPosition:-160},  "h3":{ xPosition:224 , yPosition:-96},   "h4":{ xPosition:224 , yPosition:-32},  "h5":{ xPosition:224 , yPosition:32},  "h6":{ xPosition:224 , yPosition:96},  "h7":{ xPosition:224 ,  yPosition:160},  "h8":{ xPosition:224 , yPosition:224}
 }
-let pawnXPosition = "-224"
 
 export const canvasContainer = new UIContainerStack(canvas) //declare parent element
 canvasContainer.adaptWidth = true
@@ -65,20 +64,175 @@ for (let i = 0; i < 8; i++){
     ascii_code++;
 }
 
+export const blackPawns: UIImage[] = []
+ascii_code = 'a'.charCodeAt(0) 
+for (let i = 0; i < 8; i++){
+    const blackPawn = new UIImage(canvas, new Texture("images/chessboard/black-pawn.png"))
+    blackPawn.visible = false
+    blackPawn.width = 32
+    blackPawn.height = 48
+    blackPawn.sourceLeft = 0
+    blackPawn.sourceTop = 0
+    blackPawn.sourceWidth = 60
+    blackPawn.sourceHeight = 78
+    blackPawn.positionY=squareMap[String.fromCharCode(ascii_code)+'7'].yPosition
+    blackPawn.positionX=squareMap[String.fromCharCode(ascii_code)+'7'].xPosition
+    blackPawns.push(blackPawn)
+    ascii_code++;
+}
+
+
+export const blackKnights: UIImage[] = []
+for (let i = 0; i < 2; i++){
+    const blackKnight = new UIImage(canvas, new Texture("images/chessboard/black-knight.png"))
+    blackKnight.visible = false
+    blackKnight.width = 48
+    blackKnight.height = 48
+    blackKnight.sourceLeft = 0
+    blackKnight.sourceTop = 0
+    blackKnight.sourceWidth = 82
+    blackKnight.sourceHeight = 83
+    if(i==0){
+        blackKnight.positionY=squareMap['b8'].yPosition
+        blackKnight.positionX=squareMap['b8'].xPosition
+    }
+    else{
+        blackKnight.positionY=squareMap['g8'].yPosition
+        blackKnight.positionX=squareMap['g8'].xPosition
+    }
+    blackKnights.push(blackKnight)
+}
+
+
+export const whiteBishops: UIImage[] = []
+for (let i = 0; i < 2; i++){
+    const whiteBishop = new UIImage(canvas, new Texture("images/chessboard/white-bishop.png"))
+    whiteBishop.visible = false
+    whiteBishop.width = 48
+    whiteBishop.height = 48
+    whiteBishop.sourceLeft = 0
+    whiteBishop.sourceTop = 0
+    whiteBishop.sourceWidth = 82
+    whiteBishop.sourceHeight = 82
+    if(i==0){
+        whiteBishop.positionY=squareMap['c1'].yPosition
+        whiteBishop.positionX=squareMap['c1'].xPosition
+    }
+    else{
+        whiteBishop.positionY=squareMap['f1'].yPosition
+        whiteBishop.positionX=squareMap['f1'].xPosition
+    }
+    whiteBishops.push(whiteBishop)
+}
+
+
+export const blackBishops: UIImage[] = []
+for (let i = 0; i < 2; i++){
+    const blackBishop = new UIImage(canvas, new Texture("images/chessboard/black-bishop.png"))
+    blackBishop.visible = false
+    blackBishop.width = 48
+    blackBishop.height = 48
+    blackBishop.sourceLeft = 0
+    blackBishop.sourceTop = 0
+    blackBishop.sourceWidth = 82
+    blackBishop.sourceHeight = 82
+    if(i==0){
+        blackBishop.positionY=squareMap['c8'].yPosition
+        blackBishop.positionX=squareMap['c8'].xPosition
+    }
+    else{
+        blackBishop.positionY=squareMap['f8'].yPosition
+        blackBishop.positionX=squareMap['f8'].xPosition
+    }
+    blackBishops.push(blackBishop)
+}
+
 export const whiteKnights: UIImage[] = []
 for (let i = 0; i < 2; i++){
-    const whiteKnight = new UIImage(canvas, new Texture("images/chessboard/white-pawn.png"))
+    const whiteKnight = new UIImage(canvas, new Texture("images/chessboard/white-knight.png"))
     whiteKnight.visible = false
-    whiteKnight.width = 32
+    whiteKnight.width = 48
     whiteKnight.height = 48
     whiteKnight.sourceLeft = 0
     whiteKnight.sourceTop = 0
-    whiteKnight.sourceWidth = 60
-    whiteKnight.sourceHeight = 78
-    whiteKnight.positionY=squareMap['e1'].yPosition
-    whiteKnight.positionX=squareMap['e1'].xPosition
+    whiteKnight.sourceWidth = 82
+    whiteKnight.sourceHeight = 82
+    if(i==0){
+        whiteKnight.positionY=squareMap['b1'].yPosition
+        whiteKnight.positionX=squareMap['b1'].xPosition
+    }
+    else{
+        whiteKnight.positionY=squareMap['g1'].yPosition
+        whiteKnight.positionX=squareMap['g1'].xPosition
+    }
     whiteKnights.push(whiteKnight)
 }
+
+export const whiteRooks: UIImage[] = []
+for (let i = 0; i < 2; i++){
+    const whiteRook = new UIImage(canvas, new Texture("images/chessboard/white-rook.png"))
+    whiteRook.visible = false
+    whiteRook.width = 42
+    whiteRook.height = 48
+    whiteRook.sourceLeft = 0
+    whiteRook.sourceTop = 0
+    whiteRook.sourceWidth = 69
+    whiteRook.sourceHeight = 78
+    if (i==0){
+        whiteRook.positionY=squareMap['a1'].yPosition
+        whiteRook.positionX=squareMap['a1'].xPosition
+    }
+    else{
+        whiteRook.positionY=squareMap['h1'].yPosition
+        whiteRook.positionX=squareMap['h1'].xPosition
+    }
+    whiteRooks.push(whiteRook)
+}
+
+export const blackRooks: UIImage[] = []
+for (let i = 0; i < 2; i++){
+    const blackRook = new UIImage(canvas, new Texture("images/chessboard/black-rook.png"))
+    blackRook.visible = false
+    blackRook.width = 42
+    blackRook.height = 48
+    blackRook.sourceLeft = 0
+    blackRook.sourceTop = 0
+    blackRook.sourceWidth = 70
+    blackRook.sourceHeight = 77
+    if (i==0){
+        blackRook.positionY=squareMap['a8'].yPosition
+        blackRook.positionX=squareMap['a8'].xPosition
+    }
+    else{
+        blackRook.positionY=squareMap['h8'].yPosition
+        blackRook.positionX=squareMap['h8'].xPosition
+    }
+    blackRooks.push(blackRook)
+}
+
+export const whiteQueen = new UIImage(canvas, new Texture("images/chessboard/white-queen.png"))
+whiteQueen.visible = false
+whiteQueen.width = 48
+whiteQueen.height = 48
+whiteQueen.sourceLeft = 0
+whiteQueen.sourceTop = 0
+whiteQueen.sourceWidth = 95
+whiteQueen.sourceHeight = 85
+whiteQueen.positionY=squareMap['d1'].yPosition
+whiteQueen.positionX=squareMap['d1'].xPosition
+
+export const blackQueen = new UIImage(canvas, new Texture("images/chessboard/black-queen.png"))
+blackQueen.visible = false
+blackQueen.width = 48
+blackQueen.height = 48
+blackQueen.sourceLeft = 0
+blackQueen.sourceTop = 0
+blackQueen.sourceWidth = 94
+blackQueen.sourceHeight = 90
+blackQueen.positionY=squareMap['d8'].yPosition
+blackQueen.positionX=squareMap['d8'].xPosition
+
+
 
 export const whiteKing = new UIImage(canvas, new Texture("images/chessboard/white-king.png"))
 whiteKing.visible = false
@@ -101,20 +255,3 @@ blackKing.sourceWidth = 88
 blackKing.sourceHeight = 87
 blackKing.positionY="+224"
 blackKing.positionX="32"
-
-export const blackPawns: UIImage[] = []
-ascii_code = 'a'.charCodeAt(0) 
-for (let i = 0; i < 8; i++){
-    const blackPawn = new UIImage(canvas, new Texture("images/chessboard/white-pawn.png"))
-    blackPawn.visible = false
-    blackPawn.width = 32
-    blackPawn.height = 48
-    blackPawn.sourceLeft = 0
-    blackPawn.sourceTop = 0
-    blackPawn.sourceWidth = 60
-    blackPawn.sourceHeight = 78
-    blackPawn.positionY=squareMap[String.fromCharCode(ascii_code)+'7'].yPosition
-    blackPawn.positionX=squareMap[String.fromCharCode(ascii_code)+'7'].xPosition
-    blackPawns.push(blackPawn)
-    ascii_code++;
-}

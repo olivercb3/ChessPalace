@@ -1,6 +1,6 @@
 import { Chess } from '../node_modules/chess.ts/src/chess'
 import {Chessground} from '../node_modules/chessground/src/chessground'
-import { canvasContainer, chessBoard, closeButton, whiteKing, blackKing, whitePawns, blackPawns, squareMap} from './chessboard'
+import { canvasContainer, chessBoard, closeButton, whiteKing, blackKing, whiteKnights, blackKnights, whitePawns, blackPawns, whiteRooks, blackRooks, whiteBishops, blackBishops, whiteQueen, blackQueen, squareMap} from './chessboard'
 
 class RotatorSystem {
   // this group will contain every entity that has a Transform component
@@ -64,11 +64,35 @@ function setBoardVisibility(type: boolean){
   closeButton.visible = type;
   whiteKing.visible = type;
   blackKing.visible = type;
+  whiteQueen.visible = type;
+  blackQueen.visible = type;
   whitePawns.forEach( (element) => {
     element.visible = type
   });
   blackPawns.forEach( (element) => {
     element.visible = type
   });
+  whiteKnights.forEach((element) => {
+    element.visible = type
+  });
+  blackKnights.forEach((element) =>{
+    element.visible = type
+  })
+
+  whiteBishops.forEach((element) =>{
+    element.visible = type
+  })
+
+  blackBishops.forEach((element) =>{
+    element.visible = type
+  })
+
+  whiteRooks.forEach((element) =>{
+    element.visible = type
+  })
+
+  blackRooks.forEach((element) =>{
+    element.visible = type
+  })
 }
 
