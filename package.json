@@ -16,6 +16,7 @@
   "dependencies": {
     "@chrisoakman/chessboardjs": "^1.0.0",
     "chess.ts": "^0.16.2",
-    "chessground": "^8.2.0"
+    "chessground": "^8.2.0",
+    "dts-dom": "^3.6.0"
   }
 }

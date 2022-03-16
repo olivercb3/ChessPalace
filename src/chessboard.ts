@@ -1,13 +1,17 @@
+import { ascii } from "../node_modules/chess.ts/src/state"
+
 const canvas = new UICanvas()
 
 //considering a 512*512 board
-interface ISquare{
+export interface ISquare{
+    // square: UIImage,
     xPosition: number,
-    yPosition: number
+    yPosition: number,
+    // square: UIImage
 }
 
-
-export const squareMap:{[squareName: string]: ISquare} = {
+// let defaultImage:UIImage = new UIImage()
+export let squareMap:{[squareName: string]: ISquare} = {
     "a1":{xPosition:-224 , yPosition:-224}, "a2": {  xPosition:-224 , yPosition:-160}, "a3":{  xPosition:-224 ,yPosition:-96},  "a4":{  xPosition:-224 ,yPosition:-32}, "a5":{  xPosition:-224 ,yPosition:32}, "a6":{  xPosition:-224 ,yPosition:96}, "a7":{  xPosition:-224 , yPosition:160}, "a8":{  xPosition:-224 ,yPosition:224},
     "b1":{xPosition:-160 , yPosition:-224}, "b2": {  xPosition:-160 , yPosition:-160}, "b3":{  xPosition:-160 ,yPosition:-96},  "b4":{  xPosition:-160 ,yPosition:-32}, "b5":{  xPosition:-160 ,yPosition:32}, "b6":{  xPosition:-160 ,yPosition:96}, "b7":{  xPosition:-160 , yPosition:160}, "b8":{  xPosition:-160 ,yPosition:224},
     "c1":{xPosition:-96 ,  yPosition:-224},  "c2": { xPosition:-96 ,  yPosition:-160},  "c3":{ xPosition:-96 , yPosition:-96},   "c4":{ xPosition:-96 , yPosition:-32},  "c5":{ xPosition:-96 , yPosition:32},  "c6":{ xPosition:-96 , yPosition:96},  "c7":{ xPosition:-96 ,  yPosition:160},  "c8":{ xPosition:-96 , yPosition:224},
@@ -18,22 +22,74 @@ export const squareMap:{[squareName: string]: ISquare} = {
     "h1":{xPosition:224 ,  yPosition:-224},  "h2": { xPosition:224 ,  yPosition:-160},  "h3":{ xPosition:224 , yPosition:-96},   "h4":{ xPosition:224 , yPosition:-32},  "h5":{ xPosition:224 , yPosition:32},  "h6":{ xPosition:224 , yPosition:96},  "h7":{ xPosition:224 ,  yPosition:160},  "h8":{ xPosition:224 , yPosition:224}
 }
 
+//returns the square coordinates depending on the X and Y position provided
+export function getSquare(positionX: string, positionY: string){
+    let ascii_a: number = 97 //ascii code for 'a'
+    let ascii_1: number = 49 //ascii code for '1'
+    let column: string = String.fromCharCode(ascii_a + (parseInt(positionX)+224)/64)
+    let row: string = String.fromCharCode(ascii_1 + (parseInt(positionY)+224)/64)
+    return column+row
+}
+
 export const canvasContainer = new UIContainerStack(canvas) //declare parent element
 canvasContainer.adaptWidth = true
 canvasContainer.width = "70%"
 canvasContainer.height = "100%"
-canvasContainer.opacity = 0.90
+canvasContainer.opacity = 1
 canvasContainer.color = Color4.Gray() //set background-color
 canvasContainer.visible = false
 
-export const chessBoard = new UIImage(canvas, new Texture("images/chessboard/chess-board.png"))
-chessBoard.width = 512
-chessBoard.height = 512
-chessBoard.sourceLeft = 48
-chessBoard.sourceTop = 20
-chessBoard.sourceWidth = 1296
-chessBoard.sourceHeight = 1294
-chessBoard.visible = false
+
+//sets all the canvas elements visibility to type's value
+export const board: { [key: string]: UIImage } = {};
+let boardBuilt: boolean = false
+let square:string = 'a1' 
+let count:number = 0 //keeps track on whether the square should be black or white
+while (!boardBuilt){
+    board[square] = count%2==0 ? new UIImage(canvas, new Texture("images/chessboard/black-square.png")) : new UIImage(new UICanvas, new Texture("images/chessboard/white-square.png"))
+    board[square].positionX = squareMap[square].xPosition
+    board[square].positionY = squareMap[square].yPosition
+    board[square].height = 64
+    board[square].width = 64
+    board[square].visible = false 
+
+    if (square.charAt(0) != 'h')
+        square = square.replace(square.charAt(0), String.fromCharCode(square.charCodeAt(0)+1));
+    
+    else{
+        square = square.replace(square.charAt(0), 'a');
+        count--
+        if (square.charAt(1) == '8')
+            boardBuilt = true
+        else  
+            square = square.replace(square.charAt(1), String.fromCharCode(square.charCodeAt(1)+1));
+    }
+    count++
+}
+
+export const blackSquare = new UIImage(canvas, new Texture("images/chessboard/black-square.png"))
+blackSquare.visible = false
+blackSquare.width = 64
+blackSquare.height = 64
+blackSquare.sourceLeft = 0
+blackSquare.sourceTop = 0
+blackSquare.sourceWidth = 156
+blackSquare.sourceHeight = 156
+blackSquare.positionX = squareMap['a1'].xPosition
+blackSquare.positionY = squareMap['a1'].yPosition
+blackSquare.visible=false;
+
+export const whiteSquare = new UIImage(canvas, new Texture("images/chessboard/white-square.png"))
+whiteSquare.visible = false
+whiteSquare.width = 64
+whiteSquare.height = 64
+whiteSquare.sourceLeft = 0
+whiteSquare.sourceTop = 0
+whiteSquare.sourceWidth = 156
+whiteSquare.sourceHeight = 156
+blackSquare.positionX = squareMap['a1'].xPosition
+blackSquare.positionY = squareMap['a1'].yPosition
+whiteSquare.visible=false;
 
 export const closeButton = new UIImage(canvas, new Texture("images/chessboard/close-button.png"))
 closeButton.visible = false
@@ -46,6 +102,8 @@ closeButton.sourceHeight = 896
 closeButton.hAlign="right"
 closeButton.vAlign="top"
 closeButton.positionX="-240"
+closeButton.positionY=squareMap['e1'].yPosition
+closeButton.positionX=squareMap['e2'].xPosition
 
 export const whitePawns: UIImage[] = []
 let ascii_code = 'a'.charCodeAt(0) 
@@ -63,6 +121,7 @@ for (let i = 0; i < 8; i++){
     whitePawns.push(whitePawn)
     ascii_code++;
 }
+
 
 export const blackPawns: UIImage[] = []
 ascii_code = 'a'.charCodeAt(0) 
@@ -253,5 +312,18 @@ blackKing.sourceLeft = 0
 blackKing.sourceTop = 0
 blackKing.sourceWidth = 88
 blackKing.sourceHeight = 87
-blackKing.positionY="+224"
-blackKing.positionX="32"
+blackKing.positionY=squareMap['e8'].yPosition
+blackKing.positionX=squareMap['e8'].xPosition
+
+export const movementSquare = new UIImage(canvas, new Texture("images/chessboard/square-selector-2.png"))
+movementSquare.visible = false
+movementSquare.width = 64
+movementSquare.height = 64
+movementSquare.sourceLeft = 0
+movementSquare.sourceTop = 0
+movementSquare.sourceWidth = 840
+movementSquare.sourceHeight = 880
+// movementSquare
+movementSquare.opacity = 0
+movementSquare.positionY=squareMap['e4'].yPosition
+movementSquare.positionX=squareMap['e4'].xPosition
