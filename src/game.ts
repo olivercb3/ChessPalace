@@ -1,10 +1,13 @@
 import { Chess } from '../node_modules/chess.ts/src/chess'
 import { Square } from '../node_modules/chess.ts/src/types';
-import {movementSquare, ISquare, board, getSquare} from './chessboard'
+import { clear } from '../node_modules/chessground/draw';
+import {ISquare, board, getSquare, getSquareColor, canvas} from './chessboard'
 import { canvasContainer, closeButton, whiteKing, blackKing, whiteKnights, blackKnights, whitePawns, blackPawns, whiteRooks, blackRooks, whiteBishops, blackBishops, whiteQueen, blackQueen, squareMap} from './chessboard'
 
 import { nextChar } from './utils'
-// import * as dom from '../node_modules/dts-dom/lib/index';
+
+let possibleMovementsAnimations: UIImage[] = []
+
 
 class RotatorSystem {
   // this group will contain every entity that has a Transform component
@@ -62,6 +65,53 @@ closeButton.onClick = new OnPointerDown(() => {
 
 const chess = new Chess()
 
+//returns a list of UIImages representing the square selectors for all the possible moves of parameter piece
+function displayPosibilities(piece: UIImage){
+  clearPossibleMovements()
+  let knightSquare:string = getSquare(piece.positionX, piece.positionY)
+  let possibleMoves: string[] = chess.moves({square: knightSquare})
+  log(possibleMoves)
+  for(let i:number=0; i<possibleMoves.length; i++){
+    let move:string = possibleMoves[i]
+    if(move.indexOf('x') != -1){}
+    let squareColor:string = getSquareColor(move)
+    let moveSelector:UIImage = squareColor=='white' ? new UIImage(canvas, new Texture('images/chessboard/move-white-square.png')) : new UIImage(canvas, new Texture('images/chessboard/move-black-square.png'))
+    moveSelector.height = 64
+    moveSelector.width = 64
+    moveSelector.positionX = squareMap[move.substr(move.length-2)].xPosition
+    moveSelector.positionY = squareMap[move.substr(move.length-2)].yPosition
+    moveSelector.visible = true
+    moveSelector.sourceLeft = 0
+    moveSelector.sourceTop = 0
+    moveSelector.sourceWidth = 90
+    moveSelector.sourceHeight = 90
+    if(move.indexOf('x') != -1)
+      moveSelector.opacity = 0
+    moveSelector.onClick = new OnPointerDown(() => {
+      movePiece(piece, move)
+    })
+    possibleMovementsAnimations.push(moveSelector) //add it to the data structure
+  }
+}
+
+function clearPossibleMovements(){
+  for(let i:number = 0; possibleMovementsAnimations[i];){ //clear data 
+    possibleMovementsAnimations[i].visible = false;
+    possibleMovementsAnimations.splice(i, 1);
+  }
+}
+
+//pre: piece can move to square
+// piece makes movement 
+function movePiece(piece:UIImage, movement:string){
+  chess.move(movement)
+  clearPossibleMovements()
+  if(movement.indexOf('x') != -1){// if the move was a capture
+    
+  } 
+  piece.positionX = squareMap[movement.substr(movement.length-2)].xPosition
+  piece.positionY = squareMap[movement.substr(movement.length-2)].yPosition
+}
 
 function setBoard(type: boolean){
   let boardDisplayed: boolean = false
@@ -85,65 +135,69 @@ function setPieces(type:boolean){
   blackKing.visible = type;
   whiteQueen.visible = type;
   blackQueen.visible = type;
+  whiteKing.onClick = new OnPointerDown(() => {
+    displayPosibilities(whiteKing)
+  })
+  blackKing.onClick = new OnPointerDown(() => {
+    displayPosibilities(blackKing)
+  })
+  whiteQueen.onClick = new OnPointerDown(() => {
+    displayPosibilities(whiteQueen)
+  })
+  blackQueen.onClick = new OnPointerDown(() => {
+    displayPosibilities(blackQueen)
+  })
   // movementSquare.visible = true;
   whitePawns.forEach( (element) => {
     element.visible = type
     element.onClick = new OnPointerDown(() => {
-      let pawnSquare:string = getSquare(element.positionX, element.positionY)
-      log(chess.moves({square: pawnSquare}))
+      displayPosibilities(element)
     })
   });
   blackPawns.forEach( (element) => {
     element.visible = type
     element.onClick = new OnPointerDown(() => {
-    let pawnSquare:string = getSquare(element.positionX, element.positionY)
-      log(chess.moves({square: pawnSquare}))
-    })
+      displayPosibilities(element)
+    });
   });
   whiteKnights.forEach((element) => {
     element.visible = type
     element.onClick = new OnPointerDown(() => {
-      let knightSquare:string = getSquare(element.positionX, element.positionY)
-      log(chess.moves({square: knightSquare}))
+      displayPosibilities(element)
     })  
   });
   blackKnights.forEach((element) =>{
     element.visible = type 
     element.onClick = new OnPointerDown(() => {
-      let knightSquare:string = getSquare(element.positionX, element.positionY)
-      log(chess.moves({square: knightSquare}))
+      displayPosibilities(element)
     })
   })
 
   whiteBishops.forEach((element) =>{
     element.visible = type
     element.onClick = new OnPointerDown(() => {
-      let bishopSquare:string = getSquare(element.positionX, element.positionY)
-      log(chess.moves({square: bishopSquare}))
+      displayPosibilities(element)
     })  
   })
 
   blackBishops.forEach((element) =>{
     element.visible = type
     element.onClick = new OnPointerDown(() => {
-      let bishopSquare:string = getSquare(element.positionX, element.positionY)
-      log(chess.moves({square: bishopSquare}))
+      displayPosibilities(element)
     })  
   })
 
   whiteRooks.forEach((element) =>{
     element.visible = type
     element.onClick = new OnPointerDown(() => {
-      let rookSquare:string = getSquare(element.positionX, element.positionY)
-      log(chess.moves({square: rookSquare}))
+      displayPosibilities(element)
     })
   })
 
   blackRooks.forEach((element) =>{
     element.visible = type
     element.onClick = new OnPointerDown(() => {
-      let rookSquare:string = getSquare(element.positionX, element.positionY)
-      log(chess.moves({square: rookSquare}))
+      displayPosibilities(element)
     })
   })
 }

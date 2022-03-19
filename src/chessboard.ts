@@ -1,6 +1,6 @@
 import { ascii } from "../node_modules/chess.ts/src/state"
 
-const canvas = new UICanvas()
+export const canvas = new UICanvas()
 
 //considering a 512*512 board
 export interface ISquare{
@@ -31,6 +31,17 @@ export function getSquare(positionX: string, positionY: string){
     return column+row
 }
 
+export function getSquareColor(square: string){
+    let column:string = square.charAt(square.length-2)
+    let row:string = square.charAt(square.length-1)
+    let a:number = 97 // 'a' ASCII code
+    let color = 'white'
+    if (((column.charCodeAt(0)-a+1)+parseInt(row))%2 == 0)
+        color = 'black';
+
+    return color    
+}
+
 export const canvasContainer = new UIContainerStack(canvas) //declare parent element
 canvasContainer.adaptWidth = true
 canvasContainer.width = "70%"
@@ -46,7 +57,7 @@ let boardBuilt: boolean = false
 let square:string = 'a1' 
 let count:number = 0 //keeps track on whether the square should be black or white
 while (!boardBuilt){
-    board[square] = count%2==0 ? new UIImage(canvas, new Texture("images/chessboard/black-square.png")) : new UIImage(new UICanvas, new Texture("images/chessboard/white-square.png"))
+    board[square] = count%2==0 ? new UIImage(canvas, new Texture("images/chessboard/black-square.png")) : new UIImage(canvas, new Texture("images/chessboard/white-square.png"))
     board[square].positionX = squareMap[square].xPosition
     board[square].positionY = squareMap[square].yPosition
     board[square].height = 64
@@ -67,7 +78,7 @@ while (!boardBuilt){
     count++
 }
 
-export const blackSquare = new UIImage(canvas, new Texture("images/chessboard/black-square.png"))
+export const blackSquare:UIImage = new UIImage(canvas, new Texture("images/chessboard/black-square.png"))
 blackSquare.visible = false
 blackSquare.width = 64
 blackSquare.height = 64
@@ -79,7 +90,7 @@ blackSquare.positionX = squareMap['a1'].xPosition
 blackSquare.positionY = squareMap['a1'].yPosition
 blackSquare.visible=false;
 
-export const whiteSquare = new UIImage(canvas, new Texture("images/chessboard/white-square.png"))
+export const whiteSquare:UIImage = new UIImage(canvas, new Texture("images/chessboard/white-square.png"))
 whiteSquare.visible = false
 whiteSquare.width = 64
 whiteSquare.height = 64
@@ -91,7 +102,7 @@ blackSquare.positionX = squareMap['a1'].xPosition
 blackSquare.positionY = squareMap['a1'].yPosition
 whiteSquare.visible=false;
 
-export const closeButton = new UIImage(canvas, new Texture("images/chessboard/close-button.png"))
+export const closeButton:UIImage = new UIImage(canvas, new Texture("images/chessboard/close-button.png"))
 closeButton.visible = false
 closeButton.width = 32
 closeButton.height = 32
@@ -269,7 +280,7 @@ for (let i = 0; i < 2; i++){
     blackRooks.push(blackRook)
 }
 
-export const whiteQueen = new UIImage(canvas, new Texture("images/chessboard/white-queen.png"))
+export const whiteQueen:UIImage = new UIImage(canvas, new Texture("images/chessboard/white-queen.png"))
 whiteQueen.visible = false
 whiteQueen.width = 48
 whiteQueen.height = 48
@@ -280,7 +291,7 @@ whiteQueen.sourceHeight = 85
 whiteQueen.positionY=squareMap['d1'].yPosition
 whiteQueen.positionX=squareMap['d1'].xPosition
 
-export const blackQueen = new UIImage(canvas, new Texture("images/chessboard/black-queen.png"))
+export const blackQueen:UIImage = new UIImage(canvas, new Texture("images/chessboard/black-queen.png"))
 blackQueen.visible = false
 blackQueen.width = 48
 blackQueen.height = 48
@@ -293,7 +304,7 @@ blackQueen.positionX=squareMap['d8'].xPosition
 
 
 
-export const whiteKing = new UIImage(canvas, new Texture("images/chessboard/white-king.png"))
+export const whiteKing:UIImage = new UIImage(canvas, new Texture("images/chessboard/white-king.png"))
 whiteKing.visible = false
 whiteKing.width = 48
 whiteKing.height = 48
@@ -304,7 +315,7 @@ whiteKing.sourceHeight = 85
 whiteKing.positionY=squareMap['e1'].yPosition
 whiteKing.positionX=squareMap['e1'].xPosition
 
-export const blackKing = new UIImage(canvas, new Texture("images/chessboard/black-king.png"))
+export const blackKing:UIImage = new UIImage(canvas, new Texture("images/chessboard/black-king.png"))
 blackKing.visible = false
 blackKing.width = 48
 blackKing.height = 48
@@ -315,15 +326,5 @@ blackKing.sourceHeight = 87
 blackKing.positionY=squareMap['e8'].yPosition
 blackKing.positionX=squareMap['e8'].xPosition
 
-export const movementSquare = new UIImage(canvas, new Texture("images/chessboard/square-selector-2.png"))
-movementSquare.visible = false
-movementSquare.width = 64
-movementSquare.height = 64
-movementSquare.sourceLeft = 0
-movementSquare.sourceTop = 0
-movementSquare.sourceWidth = 840
-movementSquare.sourceHeight = 880
-// movementSquare
-movementSquare.opacity = 0
-movementSquare.positionY=squareMap['e4'].yPosition
-movementSquare.positionX=squareMap['e4'].xPosition
+
+whitePieces.push(whitePawns)
