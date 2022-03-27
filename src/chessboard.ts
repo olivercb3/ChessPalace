@@ -2,33 +2,62 @@ import { ascii } from "../node_modules/chess.ts/src/state"
 
 export const canvas = new UICanvas()
 
+const resizeFactor:number = 1
+const xTranslation:number = -200.0
+const yTranslation:number = 0.0
+
 //considering a 512*512 board
 export interface ISquare{
-    // square: UIImage,
     xPosition: number,
     yPosition: number,
-    // square: UIImage
 }
 
+export let whitePieces:UIImage[] = []
+export let blackPieces:UIImage[] = []
+let size:number = 64/resizeFactor
 // let defaultImage:UIImage = new UIImage()
 export let squareMap:{[squareName: string]: ISquare} = {
-    "a1":{xPosition:-224 , yPosition:-224}, "a2": {  xPosition:-224 , yPosition:-160}, "a3":{  xPosition:-224 ,yPosition:-96},  "a4":{  xPosition:-224 ,yPosition:-32}, "a5":{  xPosition:-224 ,yPosition:32}, "a6":{  xPosition:-224 ,yPosition:96}, "a7":{  xPosition:-224 , yPosition:160}, "a8":{  xPosition:-224 ,yPosition:224},
-    "b1":{xPosition:-160 , yPosition:-224}, "b2": {  xPosition:-160 , yPosition:-160}, "b3":{  xPosition:-160 ,yPosition:-96},  "b4":{  xPosition:-160 ,yPosition:-32}, "b5":{  xPosition:-160 ,yPosition:32}, "b6":{  xPosition:-160 ,yPosition:96}, "b7":{  xPosition:-160 , yPosition:160}, "b8":{  xPosition:-160 ,yPosition:224},
-    "c1":{xPosition:-96 ,  yPosition:-224},  "c2": { xPosition:-96 ,  yPosition:-160},  "c3":{ xPosition:-96 , yPosition:-96},   "c4":{ xPosition:-96 , yPosition:-32},  "c5":{ xPosition:-96 , yPosition:32},  "c6":{ xPosition:-96 , yPosition:96},  "c7":{ xPosition:-96 ,  yPosition:160},  "c8":{ xPosition:-96 , yPosition:224},
-    "d1":{xPosition:-32 ,  yPosition:-224},  "d2": { xPosition:-32 ,  yPosition:-160},  "d3":{ xPosition:-32 , yPosition:-96},   "d4":{ xPosition:-32 , yPosition:-32},  "d5":{ xPosition:-32 , yPosition:32},  "d6":{ xPosition:-32 , yPosition:96},  "d7":{ xPosition:-32 ,  yPosition:160},  "d8":{ xPosition:-32 , yPosition:224},
-    "e1":{xPosition:32 ,   yPosition:-224},   "e2": {xPosition:32 ,   yPosition:-160},   "e3":{xPosition:32 ,  yPosition:-96},    "e4":{xPosition:32 ,  yPosition:-32},   "e5":{xPosition:32 ,  yPosition:32},   "e6":{xPosition:32 ,  yPosition:96},   "e7":{xPosition:32 ,   yPosition:160},   "e8":{xPosition:32 ,  yPosition:224},
-    "f1":{xPosition:96 ,   yPosition:-224},   "f2": {xPosition:96 ,   yPosition:-160},   "f3":{xPosition:96 ,  yPosition:-96},    "f4":{xPosition:96 ,  yPosition:-32},   "f5":{xPosition:96 ,  yPosition:32},   "f6":{xPosition:96 ,  yPosition:96},   "f7":{xPosition:96 ,   yPosition:160},   "f8":{xPosition:96 ,  yPosition:224},
-    "g1":{xPosition:160 ,  yPosition:-224},  "g2": { xPosition:160 ,  yPosition:-160},  "g3":{ xPosition:160 , yPosition:-96},   "g4":{ xPosition:160 , yPosition:-32},  "g5":{ xPosition:160 , yPosition:32},  "g6":{ xPosition:160 , yPosition:96},  "g7":{ xPosition:160 ,  yPosition:160},  "g8":{ xPosition:160 , yPosition:224},
-    "h1":{xPosition:224 ,  yPosition:-224},  "h2": { xPosition:224 ,  yPosition:-160},  "h3":{ xPosition:224 , yPosition:-96},   "h4":{ xPosition:224 , yPosition:-32},  "h5":{ xPosition:224 , yPosition:32},  "h6":{ xPosition:224 , yPosition:96},  "h7":{ xPosition:224 ,  yPosition:160},  "h8":{ xPosition:224 , yPosition:224}
+    "a1":{xPosition:-224 + xTranslation , yPosition:-224 + yTranslation}, "a2": {  xPosition:-224 + xTranslation , yPosition:-160 + yTranslation}, "a3":{  xPosition:-224 + xTranslation ,yPosition:-96 + yTranslation},  "a4":{  xPosition:-224 + xTranslation ,yPosition:-32 + yTranslation}, "a5":{  xPosition:-224 + xTranslation ,yPosition:32 + yTranslation}, "a6":{  xPosition:-224 + xTranslation ,yPosition:96 + yTranslation}, "a7":{  xPosition:-224 + xTranslation , yPosition:160 + yTranslation}, "a8":{  xPosition:-224 + xTranslation ,yPosition:224 + yTranslation},
+    "b1":{xPosition:-160 + xTranslation , yPosition:-224 + yTranslation}, "b2": {  xPosition:-160 + xTranslation , yPosition:-160 + yTranslation}, "b3":{  xPosition:-160 + xTranslation ,yPosition:-96 + yTranslation},  "b4":{  xPosition:-160 + xTranslation ,yPosition:-32 + yTranslation}, "b5":{  xPosition:-160 + xTranslation ,yPosition:32 + yTranslation}, "b6":{  xPosition:-160 + xTranslation ,yPosition:96 + yTranslation}, "b7":{  xPosition:-160 + xTranslation , yPosition:160 + yTranslation}, "b8":{  xPosition:-160 + xTranslation ,yPosition:224 + yTranslation},
+    "c1":{xPosition:-96 + xTranslation ,  yPosition:-224 + yTranslation},  "c2": { xPosition:-96 + xTranslation ,  yPosition:-160 + yTranslation},  "c3":{ xPosition:-96 + xTranslation , yPosition:-96 + yTranslation},   "c4":{ xPosition:-96 + xTranslation , yPosition:-32 + yTranslation},  "c5":{ xPosition:-96 + xTranslation , yPosition:32 + yTranslation},  "c6":{ xPosition:-96 + xTranslation , yPosition:96 + yTranslation},  "c7":{ xPosition:-96 + xTranslation ,  yPosition:160 + yTranslation},  "c8":{ xPosition:-96 + xTranslation , yPosition:224 + yTranslation},
+    "d1":{xPosition:-32 + xTranslation ,  yPosition:-224 + yTranslation},  "d2": { xPosition:-32 + xTranslation ,  yPosition:-160 + yTranslation},  "d3":{ xPosition:-32 + xTranslation , yPosition:-96 + yTranslation},   "d4":{ xPosition:-32 + xTranslation , yPosition:-32 + yTranslation},  "d5":{ xPosition:-32 + xTranslation , yPosition:32 + yTranslation},  "d6":{ xPosition:-32 + xTranslation , yPosition:96 + yTranslation},  "d7":{ xPosition:-32 + xTranslation ,  yPosition:160 + yTranslation},  "d8":{ xPosition:-32 + xTranslation , yPosition:224 + yTranslation},
+    "e1":{xPosition:32 + xTranslation ,   yPosition:-224 + yTranslation},   "e2": {xPosition:32 + xTranslation ,   yPosition:-160 + yTranslation},   "e3":{xPosition:32 + xTranslation ,  yPosition:-96 + yTranslation},    "e4":{xPosition:32 + xTranslation ,  yPosition:-32 + yTranslation},   "e5":{xPosition:32 + xTranslation ,  yPosition:32 + yTranslation},   "e6":{xPosition:32 + xTranslation ,  yPosition:96 + yTranslation},   "e7":{xPosition:32 + xTranslation ,   yPosition:160 + yTranslation},   "e8":{xPosition:32 + xTranslation ,  yPosition:224 + yTranslation},
+    "f1":{xPosition:96 + xTranslation ,   yPosition:-224 + yTranslation},   "f2": {xPosition:96 + xTranslation ,   yPosition:-160 + yTranslation},   "f3":{xPosition:96 + xTranslation ,  yPosition:-96 + yTranslation},    "f4":{xPosition:96 + xTranslation ,  yPosition:-32 + yTranslation},   "f5":{xPosition:96 + xTranslation ,  yPosition:32 + yTranslation},   "f6":{xPosition:96 + xTranslation ,  yPosition:96 + yTranslation},   "f7":{xPosition:96 + xTranslation ,   yPosition:160 + yTranslation},   "f8":{xPosition:96 + xTranslation ,  yPosition:224 + yTranslation},
+    "g1":{xPosition:160 + xTranslation ,  yPosition:-224 + yTranslation},  "g2": { xPosition:160 + xTranslation ,  yPosition:-160 + yTranslation},  "g3":{ xPosition:160 + xTranslation , yPosition:-96 + yTranslation},   "g4":{ xPosition:160 + xTranslation , yPosition:-32 + yTranslation},  "g5":{ xPosition:160 + xTranslation , yPosition:32 + yTranslation},  "g6":{ xPosition:160 + xTranslation , yPosition:96 + yTranslation},  "g7":{ xPosition:160 + xTranslation ,  yPosition:160 + yTranslation},  "g8":{ xPosition:160 + xTranslation , yPosition:224 + yTranslation},
+    "h1":{xPosition:224 + xTranslation ,  yPosition:-224 + yTranslation},  "h2": { xPosition:224 + xTranslation ,  yPosition:-160 + yTranslation},  "h3":{ xPosition:224 + xTranslation , yPosition:-96 + yTranslation},   "h4":{ xPosition:224 + xTranslation , yPosition:-32 + yTranslation},  "h5":{ xPosition:224 + xTranslation , yPosition:32 + yTranslation},  "h6":{ xPosition:224 + xTranslation , yPosition:96 + yTranslation},  "h7":{ xPosition:224 + xTranslation ,  yPosition:160 + yTranslation},  "h8":{ xPosition:224 + xTranslation , yPosition:224 + yTranslation}
 }
+
 
 //returns the square coordinates depending on the X and Y position provided
 export function getSquare(positionX: string, positionY: string){
     let ascii_a: number = 97 //ascii code for 'a'
     let ascii_1: number = 49 //ascii code for '1'
-    let column: string = String.fromCharCode(ascii_a + (parseInt(positionX)+224)/64)
-    let row: string = String.fromCharCode(ascii_1 + (parseInt(positionY)+224)/64)
-    return column+row
+   
+    for (let square in squareMap){
+        let foundX:boolean = false, foundY:boolean = false
+        let squareX= squareMap[square].xPosition, squareY = squareMap[square].yPosition 
+        log("square: " + square)
+        let distanceX:number = squareX-parseFloat(positionX), distanceY:number = squareY-parseFloat(positionY)
+        log("square's X distance to clicked piece: " + distanceX)
+        log("square's Y distance to clicked piece: "+ distanceY)
+        if(!foundX && Math.abs(distanceX) < size){
+            foundX=true
+            log("distanceX("+distanceX+") is correct!")
+        }
+        if(!foundY && Math.abs(distanceY) < size){
+            foundY=true
+            log("distanceY("+distanceY+") is correct!")
+        }
+
+        //return statement
+        if(foundX && foundY){
+            log("position: " + positionX + " " + positionY)
+            log("square: " + squareX + " " + squareY)
+            return square
+        }
+
+    }
+    return "b1"
 }
 
 export function getSquareColor(square: string){
@@ -60,8 +89,8 @@ while (!boardBuilt){
     board[square] = count%2==0 ? new UIImage(canvas, new Texture("images/chessboard/black-square.png")) : new UIImage(canvas, new Texture("images/chessboard/white-square.png"))
     board[square].positionX = squareMap[square].xPosition
     board[square].positionY = squareMap[square].yPosition
-    board[square].height = 64
-    board[square].width = 64
+    board[square].height = 64/resizeFactor
+    board[square].width = 64/resizeFactor
     board[square].visible = false 
 
     if (square.charAt(0) != 'h')
@@ -78,30 +107,6 @@ while (!boardBuilt){
     count++
 }
 
-export const blackSquare:UIImage = new UIImage(canvas, new Texture("images/chessboard/black-square.png"))
-blackSquare.visible = false
-blackSquare.width = 64
-blackSquare.height = 64
-blackSquare.sourceLeft = 0
-blackSquare.sourceTop = 0
-blackSquare.sourceWidth = 156
-blackSquare.sourceHeight = 156
-blackSquare.positionX = squareMap['a1'].xPosition
-blackSquare.positionY = squareMap['a1'].yPosition
-blackSquare.visible=false;
-
-export const whiteSquare:UIImage = new UIImage(canvas, new Texture("images/chessboard/white-square.png"))
-whiteSquare.visible = false
-whiteSquare.width = 64
-whiteSquare.height = 64
-whiteSquare.sourceLeft = 0
-whiteSquare.sourceTop = 0
-whiteSquare.sourceWidth = 156
-whiteSquare.sourceHeight = 156
-blackSquare.positionX = squareMap['a1'].xPosition
-blackSquare.positionY = squareMap['a1'].yPosition
-whiteSquare.visible=false;
-
 export const closeButton:UIImage = new UIImage(canvas, new Texture("images/chessboard/close-button.png"))
 closeButton.visible = false
 closeButton.width = 32
@@ -116,7 +121,6 @@ closeButton.positionX="-240"
 closeButton.positionY=squareMap['e1'].yPosition
 closeButton.positionX=squareMap['e2'].xPosition
 
-export const whitePawns: UIImage[] = []
 let ascii_code = 'a'.charCodeAt(0) 
 for (let i = 0; i < 8; i++){
     const whitePawn = new UIImage(canvas, new Texture("images/chessboard/white-pawn.png"))
@@ -129,12 +133,11 @@ for (let i = 0; i < 8; i++){
     whitePawn.sourceHeight = 78
     whitePawn.positionY=squareMap[String.fromCharCode(ascii_code)+'2'].yPosition
     whitePawn.positionX=squareMap[String.fromCharCode(ascii_code)+'2'].xPosition
-    whitePawns.push(whitePawn)
     ascii_code++;
+    whitePieces.push(whitePawn)
 }
 
 
-export const blackPawns: UIImage[] = []
 ascii_code = 'a'.charCodeAt(0) 
 for (let i = 0; i < 8; i++){
     const blackPawn = new UIImage(canvas, new Texture("images/chessboard/black-pawn.png"))
@@ -147,12 +150,11 @@ for (let i = 0; i < 8; i++){
     blackPawn.sourceHeight = 78
     blackPawn.positionY=squareMap[String.fromCharCode(ascii_code)+'7'].yPosition
     blackPawn.positionX=squareMap[String.fromCharCode(ascii_code)+'7'].xPosition
-    blackPawns.push(blackPawn)
     ascii_code++;
+    blackPieces.push(blackPawn)
 }
 
 
-export const blackKnights: UIImage[] = []
 for (let i = 0; i < 2; i++){
     const blackKnight = new UIImage(canvas, new Texture("images/chessboard/black-knight.png"))
     blackKnight.visible = false
@@ -170,11 +172,10 @@ for (let i = 0; i < 2; i++){
         blackKnight.positionY=squareMap['g8'].yPosition
         blackKnight.positionX=squareMap['g8'].xPosition
     }
-    blackKnights.push(blackKnight)
+    blackPieces.push(blackKnight)
 }
 
 
-export const whiteBishops: UIImage[] = []
 for (let i = 0; i < 2; i++){
     const whiteBishop = new UIImage(canvas, new Texture("images/chessboard/white-bishop.png"))
     whiteBishop.visible = false
@@ -192,11 +193,10 @@ for (let i = 0; i < 2; i++){
         whiteBishop.positionY=squareMap['f1'].yPosition
         whiteBishop.positionX=squareMap['f1'].xPosition
     }
-    whiteBishops.push(whiteBishop)
+    whitePieces.push(whiteBishop)
 }
 
 
-export const blackBishops: UIImage[] = []
 for (let i = 0; i < 2; i++){
     const blackBishop = new UIImage(canvas, new Texture("images/chessboard/black-bishop.png"))
     blackBishop.visible = false
@@ -214,10 +214,9 @@ for (let i = 0; i < 2; i++){
         blackBishop.positionY=squareMap['f8'].yPosition
         blackBishop.positionX=squareMap['f8'].xPosition
     }
-    blackBishops.push(blackBishop)
+    blackPieces.push(blackBishop)
 }
 
-export const whiteKnights: UIImage[] = []
 for (let i = 0; i < 2; i++){
     const whiteKnight = new UIImage(canvas, new Texture("images/chessboard/white-knight.png"))
     whiteKnight.visible = false
@@ -235,10 +234,9 @@ for (let i = 0; i < 2; i++){
         whiteKnight.positionY=squareMap['g1'].yPosition
         whiteKnight.positionX=squareMap['g1'].xPosition
     }
-    whiteKnights.push(whiteKnight)
+    whitePieces.push(whiteKnight)
 }
 
-export const whiteRooks: UIImage[] = []
 for (let i = 0; i < 2; i++){
     const whiteRook = new UIImage(canvas, new Texture("images/chessboard/white-rook.png"))
     whiteRook.visible = false
@@ -256,10 +254,9 @@ for (let i = 0; i < 2; i++){
         whiteRook.positionY=squareMap['h1'].yPosition
         whiteRook.positionX=squareMap['h1'].xPosition
     }
-    whiteRooks.push(whiteRook)
+    whitePieces.push(whiteRook)
 }
 
-export const blackRooks: UIImage[] = []
 for (let i = 0; i < 2; i++){
     const blackRook = new UIImage(canvas, new Texture("images/chessboard/black-rook.png"))
     blackRook.visible = false
@@ -277,10 +274,10 @@ for (let i = 0; i < 2; i++){
         blackRook.positionY=squareMap['h8'].yPosition
         blackRook.positionX=squareMap['h8'].xPosition
     }
-    blackRooks.push(blackRook)
+    blackPieces.push(blackRook)
 }
 
-export const whiteQueen:UIImage = new UIImage(canvas, new Texture("images/chessboard/white-queen.png"))
+const whiteQueen:UIImage = new UIImage(canvas, new Texture("images/chessboard/white-queen.png"))
 whiteQueen.visible = false
 whiteQueen.width = 48
 whiteQueen.height = 48
@@ -290,8 +287,9 @@ whiteQueen.sourceWidth = 95
 whiteQueen.sourceHeight = 85
 whiteQueen.positionY=squareMap['d1'].yPosition
 whiteQueen.positionX=squareMap['d1'].xPosition
+whitePieces.push(whiteQueen)
 
-export const blackQueen:UIImage = new UIImage(canvas, new Texture("images/chessboard/black-queen.png"))
+const blackQueen:UIImage = new UIImage(canvas, new Texture("images/chessboard/black-queen.png"))
 blackQueen.visible = false
 blackQueen.width = 48
 blackQueen.height = 48
@@ -301,10 +299,11 @@ blackQueen.sourceWidth = 94
 blackQueen.sourceHeight = 90
 blackQueen.positionY=squareMap['d8'].yPosition
 blackQueen.positionX=squareMap['d8'].xPosition
+blackPieces.push(blackQueen)
 
 
 
-export const whiteKing:UIImage = new UIImage(canvas, new Texture("images/chessboard/white-king.png"))
+const whiteKing:UIImage = new UIImage(canvas, new Texture("images/chessboard/white-king.png"))
 whiteKing.visible = false
 whiteKing.width = 48
 whiteKing.height = 48
@@ -314,8 +313,9 @@ whiteKing.sourceWidth = 87
 whiteKing.sourceHeight = 85
 whiteKing.positionY=squareMap['e1'].yPosition
 whiteKing.positionX=squareMap['e1'].xPosition
+whitePieces.push(whiteKing)
 
-export const blackKing:UIImage = new UIImage(canvas, new Texture("images/chessboard/black-king.png"))
+const blackKing:UIImage = new UIImage(canvas, new Texture("images/chessboard/black-king.png"))
 blackKing.visible = false
 blackKing.width = 48
 blackKing.height = 48
@@ -325,6 +325,9 @@ blackKing.sourceWidth = 88
 blackKing.sourceHeight = 87
 blackKing.positionY=squareMap['e8'].yPosition
 blackKing.positionX=squareMap['e8'].xPosition
+blackPieces.push(blackKing)
 
-
-whitePieces.push(whitePawns)
+for(let i=0; i<whitePieces.length;i++){
+    whitePieces[i].width = parseFloat(whitePieces[i].width.replace('px','')) / resizeFactor
+    blackPieces[i].width = parseFloat(blackPieces[i].width.replace('px','')) / resizeFactor
+}

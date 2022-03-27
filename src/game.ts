@@ -2,8 +2,7 @@ import { Chess } from '../node_modules/chess.ts/src/chess'
 import { Square } from '../node_modules/chess.ts/src/types';
 import { clear } from '../node_modules/chessground/draw';
 import {ISquare, board, getSquare, getSquareColor, canvas} from './chessboard'
-import { canvasContainer, closeButton, whiteKing, blackKing, whiteKnights, blackKnights, whitePawns, blackPawns, whiteRooks, blackRooks, whiteBishops, blackBishops, whiteQueen, blackQueen, squareMap} from './chessboard'
-
+import { canvasContainer, closeButton, squareMap, whitePieces, blackPieces} from './chessboard'
 import { nextChar } from './utils'
 
 let possibleMovementsAnimations: UIImage[] = []
@@ -68,11 +67,14 @@ const chess = new Chess()
 //returns a list of UIImages representing the square selectors for all the possible moves of parameter piece
 function displayPosibilities(piece: UIImage){
   clearPossibleMovements()
-  let knightSquare:string = getSquare(piece.positionX, piece.positionY)
-  let possibleMoves: string[] = chess.moves({square: knightSquare})
-  log(possibleMoves)
+  // log(piece)
+  let square:string = getSquare(piece.positionX, piece.positionY)
+  let possibleMoves: string[] = chess.moves({square: square})
   for(let i:number=0; i<possibleMoves.length; i++){
     let move:string = possibleMoves[i]
+    move = move.replace('#','')
+    move = move.replace('+','')
+    log(move)
     if(move.indexOf('x') != -1){}
     let squareColor:string = getSquareColor(move)
     let moveSelector:UIImage = squareColor=='white' ? new UIImage(canvas, new Texture('images/chessboard/move-white-square.png')) : new UIImage(canvas, new Texture('images/chessboard/move-black-square.png'))
@@ -104,13 +106,29 @@ function clearPossibleMovements(){
 //pre: piece can move to square
 // piece makes movement 
 function movePiece(piece:UIImage, movement:string){
+  log(chess.moves)
   chess.move(movement)
   clearPossibleMovements()
+  let movePositionX = squareMap[movement.substr(movement.length-2)].xPosition
+  let movePositionY = squareMap[movement.substr(movement.length-2)].yPosition
   if(movement.indexOf('x') != -1){// if the move was a capture
-    
+    let found:boolean = false;
+    let i = 0
+    log (movePositionX + " " + movePositionY)
+    while(!found && i<whitePieces.length){
+      if (whitePieces[i].visible && whitePieces[i].positionX == movePositionX.toString()+"px" && whitePieces[i].positionY == movePositionY.toString()+"px"){
+        whitePieces[i].visible = false;
+        found = true;
+      }
+      if (blackPieces[i].visible && blackPieces[i].positionX == movePositionX.toString()+"px" && blackPieces[i].positionY == movePositionY.toString()+"px"){
+        blackPieces[i].visible = false;
+        found = true;
+      }
+      i++
+    }
   } 
-  piece.positionX = squareMap[movement.substr(movement.length-2)].xPosition
-  piece.positionY = squareMap[movement.substr(movement.length-2)].yPosition
+  piece.positionX = movePositionX
+  piece.positionY = movePositionY
 }
 
 function setBoard(type: boolean){
@@ -131,73 +149,16 @@ function setBoard(type: boolean){
 }
 
 function setPieces(type:boolean){
-  whiteKing.visible = type;
-  blackKing.visible = type;
-  whiteQueen.visible = type;
-  blackQueen.visible = type;
-  whiteKing.onClick = new OnPointerDown(() => {
-    displayPosibilities(whiteKing)
-  })
-  blackKing.onClick = new OnPointerDown(() => {
-    displayPosibilities(blackKing)
-  })
-  whiteQueen.onClick = new OnPointerDown(() => {
-    displayPosibilities(whiteQueen)
-  })
-  blackQueen.onClick = new OnPointerDown(() => {
-    displayPosibilities(blackQueen)
-  })
-  // movementSquare.visible = true;
-  whitePawns.forEach( (element) => {
-    element.visible = type
-    element.onClick = new OnPointerDown(() => {
-      displayPosibilities(element)
+  for(let i = 0; i < whitePieces.length; i++){
+    let whitePiece = whitePieces[i]
+    whitePiece.visible = type;
+    whitePiece.onClick = new OnPointerDown(()=> {
+      displayPosibilities(whitePiece)
     })
-  });
-  blackPawns.forEach( (element) => {
-    element.visible = type
-    element.onClick = new OnPointerDown(() => {
-      displayPosibilities(element)
-    });
-  });
-  whiteKnights.forEach((element) => {
-    element.visible = type
-    element.onClick = new OnPointerDown(() => {
-      displayPosibilities(element)
-    })  
-  });
-  blackKnights.forEach((element) =>{
-    element.visible = type 
-    element.onClick = new OnPointerDown(() => {
-      displayPosibilities(element)
+    let blackPiece = blackPieces[i]
+    blackPiece.visible = type;
+    blackPiece.onClick = new OnPointerDown(()=> {
+      displayPosibilities(blackPiece)
     })
-  })
-
-  whiteBishops.forEach((element) =>{
-    element.visible = type
-    element.onClick = new OnPointerDown(() => {
-      displayPosibilities(element)
-    })  
-  })
-
-  blackBishops.forEach((element) =>{
-    element.visible = type
-    element.onClick = new OnPointerDown(() => {
-      displayPosibilities(element)
-    })  
-  })
-
-  whiteRooks.forEach((element) =>{
-    element.visible = type
-    element.onClick = new OnPointerDown(() => {
-      displayPosibilities(element)
-    })
-  })
-
-  blackRooks.forEach((element) =>{
-    element.visible = type
-    element.onClick = new OnPointerDown(() => {
-      displayPosibilities(element)
-    })
-  })
+  }
 }
