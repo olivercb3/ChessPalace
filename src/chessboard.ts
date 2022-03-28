@@ -1,21 +1,60 @@
 import { ascii } from "../node_modules/chess.ts/src/state"
+import { isSquare } from "../node_modules/chess.ts/src/utils"
+import { Chess } from '../node_modules/chess.ts/src/chess'
+
 
 export const canvas = new UICanvas()
 
 const resizeFactor:number = 1
-const xTranslation:number = -200.0
+const xTranslation:number = -100.0
 const yTranslation:number = 0.0
+let whiteToPlay:boolean = true
+let possibleMovementsAnimations: UIImage[] = []
+
 
 //considering a 512*512 board
 export interface ISquare{
     xPosition: number,
     yPosition: number,
 }
-
+export const chess = new Chess()
 export let whitePieces:UIImage[] = []
 export let blackPieces:UIImage[] = []
 let size:number = 64/resizeFactor
-// let defaultImage:UIImage = new UIImage()
+
+export function setBoard(type: boolean){
+    let boardDisplayed: boolean = false
+    let square:string = 'a1' 
+    while (!boardDisplayed){
+        board[square].visible = true  //set the square visibility attribute
+        if (square.charAt(0) != 'h')
+            square = square.replace(square.charAt(0), String.fromCharCode(square.charCodeAt(0)+1));      
+        else{
+            square = square.replace(square.charAt(0), 'a');
+            if (square.charAt(1) == '8')
+                boardDisplayed = true
+            else  
+                square = square.replace(square.charAt(1), String.fromCharCode(square.charCodeAt(1)+1));
+        }
+    }
+}
+
+export function setPieces(type:boolean){
+    for(let i = 0; i < whitePieces.length; i++){
+        let whitePiece = whitePieces[i]
+        whitePiece.visible = type;
+        whitePiece.onClick = new OnPointerDown(()=> {
+        displayPosibilities(whitePiece)
+        })
+        let blackPiece = blackPieces[i]
+        blackPiece.visible = type;
+        blackPiece.onClick = new OnPointerDown(()=> {
+        displayPosibilities(blackPiece)
+        })
+    }
+}
+
+
 export let squareMap:{[squareName: string]: ISquare} = {
     "a1":{xPosition:-224 + xTranslation , yPosition:-224 + yTranslation}, "a2": {  xPosition:-224 + xTranslation , yPosition:-160 + yTranslation}, "a3":{  xPosition:-224 + xTranslation ,yPosition:-96 + yTranslation},  "a4":{  xPosition:-224 + xTranslation ,yPosition:-32 + yTranslation}, "a5":{  xPosition:-224 + xTranslation ,yPosition:32 + yTranslation}, "a6":{  xPosition:-224 + xTranslation ,yPosition:96 + yTranslation}, "a7":{  xPosition:-224 + xTranslation , yPosition:160 + yTranslation}, "a8":{  xPosition:-224 + xTranslation ,yPosition:224 + yTranslation},
     "b1":{xPosition:-160 + xTranslation , yPosition:-224 + yTranslation}, "b2": {  xPosition:-160 + xTranslation , yPosition:-160 + yTranslation}, "b3":{  xPosition:-160 + xTranslation ,yPosition:-96 + yTranslation},  "b4":{  xPosition:-160 + xTranslation ,yPosition:-32 + yTranslation}, "b5":{  xPosition:-160 + xTranslation ,yPosition:32 + yTranslation}, "b6":{  xPosition:-160 + xTranslation ,yPosition:96 + yTranslation}, "b7":{  xPosition:-160 + xTranslation , yPosition:160 + yTranslation}, "b8":{  xPosition:-160 + xTranslation ,yPosition:224 + yTranslation},
@@ -27,6 +66,109 @@ export let squareMap:{[squareName: string]: ISquare} = {
     "h1":{xPosition:224 + xTranslation ,  yPosition:-224 + yTranslation},  "h2": { xPosition:224 + xTranslation ,  yPosition:-160 + yTranslation},  "h3":{ xPosition:224 + xTranslation , yPosition:-96 + yTranslation},   "h4":{ xPosition:224 + xTranslation , yPosition:-32 + yTranslation},  "h5":{ xPosition:224 + xTranslation , yPosition:32 + yTranslation},  "h6":{ xPosition:224 + xTranslation , yPosition:96 + yTranslation},  "h7":{ xPosition:224 + xTranslation ,  yPosition:160 + yTranslation},  "h8":{ xPosition:224 + xTranslation , yPosition:224 + yTranslation}
 }
 
+//pre: piece can move to square
+// piece makes movement 
+export function movePiece(piece:UIImage, movement:string){
+    if(movement == "O-O"){
+      chess.move('O-O')
+      piece.positionX = squareMap[whiteToPlay ? 'g1' : 'g8'].xPosition
+      piece.positionY = squareMap[whiteToPlay ? 'g1' : 'g8'].yPosition
+      let rook = getPiece(whiteToPlay ? 'h1' : 'h8')
+      rook.positionX = squareMap[whiteToPlay ? 'f1' : 'f8'].xPosition
+      rook.positionY = squareMap[whiteToPlay ? 'g1' : 'g8'].yPosition
+    }  
+    else if(movement == "O-O-O"){
+      chess.move('O-O-O')
+      piece.positionX = squareMap[whiteToPlay ? 'c1' : 'c8'].xPosition
+      piece.positionY = squareMap[whiteToPlay ? 'c1' : 'c8'].yPosition
+      let rook = getPiece(whiteToPlay ? 'a1' : 'a8')
+      rook.positionX = squareMap[whiteToPlay ? 'd1' : 'd8'].xPosition
+      rook.positionY = squareMap[whiteToPlay ? 'd1' : 'd8'].yPosition
+    } 
+
+  
+  //Normal move
+  else{
+    chess.move(movement)
+    let movePositionX = squareMap[movement.substr(movement.length-2)].xPosition
+    let movePositionY = squareMap[movement.substr(movement.length-2)].yPosition
+
+    if(movement.indexOf('x') != -1){// if the move was a capture
+      let found:boolean = false;
+      let i = 0
+      while(!found && i<whitePieces.length){
+        if (whitePieces[i].visible && whitePieces[i].positionX == movePositionX.toString()+"px" && whitePieces[i].positionY == movePositionY.toString()+"px"){
+          whitePieces[i].visible = false;
+          found = true;
+        }
+        if (blackPieces[i].visible && blackPieces[i].positionX == movePositionX.toString()+"px" && blackPieces[i].positionY == movePositionY.toString()+"px"){
+          blackPieces[i].visible = false;
+          found = true;
+        }
+        i++
+      }
+
+    } 
+    piece.positionX = movePositionX
+    piece.positionY = movePositionY
+  }
+    
+  clearPossibleMovements()
+  whiteToPlay = !whiteToPlay
+} 
+
+function clearPossibleMovements(){
+    for(let i:number = 0; possibleMovementsAnimations[i];){ //clear data 
+      possibleMovementsAnimations[i].visible = false;
+      possibleMovementsAnimations.splice(i, 1);
+    }
+  }
+
+//returns a list of UIImages representing the square selectors for all the possible moves of parameter piece
+export function displayPosibilities(piece: UIImage){
+    clearPossibleMovements()
+    let square:string = getSquare(piece.positionX as string, piece.positionY as string)
+    let possibleMoves: string[] = chess.moves({square: square})
+    for(let i:number=0; i<possibleMoves.length; i++){
+      let move:string = possibleMoves[i]
+      move = move.replace('#','')
+      move = move.replace('+','')
+      let moveSelector:UIImage
+      let squareColor:string 
+      if(move == "O-O"){
+        squareColor = whiteToPlay ? 'black' : 'white'
+        moveSelector = squareColor=='white' ? new UIImage(canvas, new Texture('images/chessboard/move-white-square.png')) : new UIImage(canvas, new Texture('images/chessboard/move-black-square.png'))
+        moveSelector.positionX = squareMap[whiteToPlay ? 'g1' : 'g8'].xPosition
+        moveSelector.positionY = squareMap[whiteToPlay ? 'g1' : 'g8'].yPosition
+      }
+      else if(move == "O-O-O"){
+        squareColor = whiteToPlay ? 'black' : 'white'
+        moveSelector = squareColor=='white' ? new UIImage(canvas, new Texture('images/chessboard/move-white-square.png')) : new UIImage(canvas, new Texture('images/chessboard/move-black-square.png'))
+        moveSelector.positionX = squareMap[whiteToPlay ? 'c1' : 'c8'].xPosition
+        moveSelector.positionY = squareMap[whiteToPlay ? 'c1' : 'c8'].yPosition
+      }
+      else{
+        squareColor= getSquareColor(move)
+        moveSelector = squareColor=='white' ? new UIImage(canvas, new Texture('images/chessboard/move-white-square.png')) : new UIImage(canvas, new Texture('images/chessboard/move-black-square.png'))
+        moveSelector.positionX = squareMap[move.substr(move.length-2)].xPosition
+        moveSelector.positionY = squareMap[move.substr(move.length-2)].yPosition
+      }
+      
+      moveSelector.height = 64
+      moveSelector.width = 64
+      moveSelector.visible = true
+      moveSelector.sourceLeft = 0
+      moveSelector.sourceTop = 0
+      moveSelector.sourceWidth = 90
+      moveSelector.sourceHeight = 90
+      if(move.indexOf('x') != -1)
+        moveSelector.opacity = 0
+      moveSelector.onClick = new OnPointerDown(() => {
+        movePiece(piece, move)
+      })
+      possibleMovementsAnimations.push(moveSelector) //add it to the data structure
+    }
+  }
 
 //returns the square coordinates depending on the X and Y position provided
 export function getSquare(positionX: string, positionY: string){
@@ -36,29 +178,36 @@ export function getSquare(positionX: string, positionY: string){
     for (let square in squareMap){
         let foundX:boolean = false, foundY:boolean = false
         let squareX= squareMap[square].xPosition, squareY = squareMap[square].yPosition 
-        log("square: " + square)
         let distanceX:number = squareX-parseFloat(positionX), distanceY:number = squareY-parseFloat(positionY)
-        log("square's X distance to clicked piece: " + distanceX)
-        log("square's Y distance to clicked piece: "+ distanceY)
         if(!foundX && Math.abs(distanceX) < size){
             foundX=true
-            log("distanceX("+distanceX+") is correct!")
         }
         if(!foundY && Math.abs(distanceY) < size){
             foundY=true
-            log("distanceY("+distanceY+") is correct!")
         }
 
         //return statement
         if(foundX && foundY){
-            log("position: " + positionX + " " + positionY)
-            log("square: " + squareX + " " + squareY)
             return square
         }
 
     }
     return "b1"
 }
+
+//returns the piece(<UIImage>) alive(visible) in whitePieces/blackPieces placed at "square"
+export function getPiece(square: string):UIImage{
+    let mySquare:ISquare = squareMap[square]
+    for(let i = 0; i < whitePieces.length; i++){
+        if (whitePieces[i].visible && whitePieces[i].positionX.replace('px','') == mySquare.xPosition && whitePieces[i].positionY.replace('px','') == mySquare.yPosition){
+            return whitePieces[i]
+        }
+        else if (blackPieces[i].visible && blackPieces[i].positionX.replace('px','') == mySquare.xPosition && blackPieces[i].positionY.replace('px','') == mySquare.yPosition){
+            return blackPieces[i]
+        }
+    }
+    return whitePieces[0]
+}   
 
 export function getSquareColor(square: string){
     let column:string = square.charAt(square.length-2)
