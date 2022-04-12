@@ -1,9 +1,10 @@
-import { Square } from '../node_modules/chess.ts/src/types';
-import { clear } from '../node_modules/chessground/draw';
-import {setBoard, setPieces, canvasContainer} from './chessboard'
-// import { canvasContainer, closeButton, squareMap, whitePieces, blackPieces, movePiece} from './chessboard'
-import { nextChar } from './utils'
+import {Board} from './board'
+import {Clock} from './clock'
 
+import {squareMap, chessColor, PieceType, resizeFactor, ISquare, getSquareColor} from './utils'
+
+let white_timer:number = 300
+let black_timer:number = 300
 
 class RotatorSystem {
   // this group will contain every entity that has a Transform component
@@ -20,6 +21,22 @@ class RotatorSystem {
     }
   }
 }
+
+//updates boards timer values
+class TimerSystem {
+  group = engine.getComponentGroup(Transform)
+  update(dt: number) {
+    board.chessgame.turn() == 'w' ? white_clock.timer -= dt : black_clock.timer -= dt
+    board.chessgame.turn() == 'w' ? white_clock.updateTimer() : black_clock.updateTimer()
+    if (white_clock.timer <= 0){
+      // board.chessgame.gameOver()
+    }
+    else if(black_clock.timer <= 0){
+      // board.chessgame.move('w', 'resign')
+    }
+  }
+}
+
 
 // Add a new instance of the system to the engine
 engine.addSystem(new RotatorSystem())
@@ -43,20 +60,20 @@ function spawnCube(x: number, y: number, z: number) {
 }
 
 const cube = spawnCube(8, 1, 8)
+let board:Board
+let white_clock:Clock
+let black_clock:Clock
 cube.addComponent(
   new OnPointerDown(() => {
     cube.getComponent(Transform).scale.z *= 1.1
     cube.getComponent(Transform).scale.x *= 0.9
-    canvasContainer.visible = true;
-    // chessBoard.visible = true;
-    setBoard(true)
-    setPieces(true)
+    board = new Board()
+    white_clock = new Clock('white', white_timer, board.canvas)
+    black_clock = new Clock('black', white_timer, board.canvas)
+
+    engine.addSystem(new TimerSystem())
   })
 )
-
-// closeButton.onClick = new OnPointerDown(() => {
-//   // board = null
-// })
 
 
 

@@ -1,25 +1,25 @@
 import { ascii } from "../node_modules/chess.ts/src/state"
 import { isSquare } from "../node_modules/chess.ts/src/utils"
 import { Chess } from '../node_modules/chess.ts/src/chess'
+import { ISquare, getSquareColor, squareMap } from "./utils"
 
 
-export const canvas = new UICanvas()
+const canvas = new UICanvas()
 
-const resizeFactor:number = 1
-const xTranslation:number = -100.0
-const yTranslation:number = 0.0
 let whiteToPlay:boolean = true
 let possibleMovementsAnimations: UIImage[] = []
 
 
-//considering a 512*512 board
-export interface ISquare{
-    xPosition: number,
-    yPosition: number,
+
+class chessboard{
 }
-export const chess = new Chess()
-export let whitePieces:UIImage[] = []
-export let blackPieces:UIImage[] = []
+
+
+//considering a 512*512 board
+
+const chess = new Chess()
+let whitePieces:UIImage[] = []
+let blackPieces:UIImage[] = []
 let size:number = 64/resizeFactor
 
 export function setBoard(type: boolean){
@@ -54,21 +54,9 @@ export function setPieces(type:boolean){
     }
 }
 
-
-export let squareMap:{[squareName: string]: ISquare} = {
-    "a1":{xPosition:-224 + xTranslation , yPosition:-224 + yTranslation}, "a2": {  xPosition:-224 + xTranslation , yPosition:-160 + yTranslation}, "a3":{  xPosition:-224 + xTranslation ,yPosition:-96 + yTranslation},  "a4":{  xPosition:-224 + xTranslation ,yPosition:-32 + yTranslation}, "a5":{  xPosition:-224 + xTranslation ,yPosition:32 + yTranslation}, "a6":{  xPosition:-224 + xTranslation ,yPosition:96 + yTranslation}, "a7":{  xPosition:-224 + xTranslation , yPosition:160 + yTranslation}, "a8":{  xPosition:-224 + xTranslation ,yPosition:224 + yTranslation},
-    "b1":{xPosition:-160 + xTranslation , yPosition:-224 + yTranslation}, "b2": {  xPosition:-160 + xTranslation , yPosition:-160 + yTranslation}, "b3":{  xPosition:-160 + xTranslation ,yPosition:-96 + yTranslation},  "b4":{  xPosition:-160 + xTranslation ,yPosition:-32 + yTranslation}, "b5":{  xPosition:-160 + xTranslation ,yPosition:32 + yTranslation}, "b6":{  xPosition:-160 + xTranslation ,yPosition:96 + yTranslation}, "b7":{  xPosition:-160 + xTranslation , yPosition:160 + yTranslation}, "b8":{  xPosition:-160 + xTranslation ,yPosition:224 + yTranslation},
-    "c1":{xPosition:-96 + xTranslation ,  yPosition:-224 + yTranslation},  "c2": { xPosition:-96 + xTranslation ,  yPosition:-160 + yTranslation},  "c3":{ xPosition:-96 + xTranslation , yPosition:-96 + yTranslation},   "c4":{ xPosition:-96 + xTranslation , yPosition:-32 + yTranslation},  "c5":{ xPosition:-96 + xTranslation , yPosition:32 + yTranslation},  "c6":{ xPosition:-96 + xTranslation , yPosition:96 + yTranslation},  "c7":{ xPosition:-96 + xTranslation ,  yPosition:160 + yTranslation},  "c8":{ xPosition:-96 + xTranslation , yPosition:224 + yTranslation},
-    "d1":{xPosition:-32 + xTranslation ,  yPosition:-224 + yTranslation},  "d2": { xPosition:-32 + xTranslation ,  yPosition:-160 + yTranslation},  "d3":{ xPosition:-32 + xTranslation , yPosition:-96 + yTranslation},   "d4":{ xPosition:-32 + xTranslation , yPosition:-32 + yTranslation},  "d5":{ xPosition:-32 + xTranslation , yPosition:32 + yTranslation},  "d6":{ xPosition:-32 + xTranslation , yPosition:96 + yTranslation},  "d7":{ xPosition:-32 + xTranslation ,  yPosition:160 + yTranslation},  "d8":{ xPosition:-32 + xTranslation , yPosition:224 + yTranslation},
-    "e1":{xPosition:32 + xTranslation ,   yPosition:-224 + yTranslation},   "e2": {xPosition:32 + xTranslation ,   yPosition:-160 + yTranslation},   "e3":{xPosition:32 + xTranslation ,  yPosition:-96 + yTranslation},    "e4":{xPosition:32 + xTranslation ,  yPosition:-32 + yTranslation},   "e5":{xPosition:32 + xTranslation ,  yPosition:32 + yTranslation},   "e6":{xPosition:32 + xTranslation ,  yPosition:96 + yTranslation},   "e7":{xPosition:32 + xTranslation ,   yPosition:160 + yTranslation},   "e8":{xPosition:32 + xTranslation ,  yPosition:224 + yTranslation},
-    "f1":{xPosition:96 + xTranslation ,   yPosition:-224 + yTranslation},   "f2": {xPosition:96 + xTranslation ,   yPosition:-160 + yTranslation},   "f3":{xPosition:96 + xTranslation ,  yPosition:-96 + yTranslation},    "f4":{xPosition:96 + xTranslation ,  yPosition:-32 + yTranslation},   "f5":{xPosition:96 + xTranslation ,  yPosition:32 + yTranslation},   "f6":{xPosition:96 + xTranslation ,  yPosition:96 + yTranslation},   "f7":{xPosition:96 + xTranslation ,   yPosition:160 + yTranslation},   "f8":{xPosition:96 + xTranslation ,  yPosition:224 + yTranslation},
-    "g1":{xPosition:160 + xTranslation ,  yPosition:-224 + yTranslation},  "g2": { xPosition:160 + xTranslation ,  yPosition:-160 + yTranslation},  "g3":{ xPosition:160 + xTranslation , yPosition:-96 + yTranslation},   "g4":{ xPosition:160 + xTranslation , yPosition:-32 + yTranslation},  "g5":{ xPosition:160 + xTranslation , yPosition:32 + yTranslation},  "g6":{ xPosition:160 + xTranslation , yPosition:96 + yTranslation},  "g7":{ xPosition:160 + xTranslation ,  yPosition:160 + yTranslation},  "g8":{ xPosition:160 + xTranslation , yPosition:224 + yTranslation},
-    "h1":{xPosition:224 + xTranslation ,  yPosition:-224 + yTranslation},  "h2": { xPosition:224 + xTranslation ,  yPosition:-160 + yTranslation},  "h3":{ xPosition:224 + xTranslation , yPosition:-96 + yTranslation},   "h4":{ xPosition:224 + xTranslation , yPosition:-32 + yTranslation},  "h5":{ xPosition:224 + xTranslation , yPosition:32 + yTranslation},  "h6":{ xPosition:224 + xTranslation , yPosition:96 + yTranslation},  "h7":{ xPosition:224 + xTranslation ,  yPosition:160 + yTranslation},  "h8":{ xPosition:224 + xTranslation , yPosition:224 + yTranslation}
-}
-
 //pre: piece can move to square
 // piece makes movement 
-export function movePiece(piece:UIImage, movement:string){
+function movePiece(piece:UIImage, movement:string){
     if(movement == "O-O"){
       chess.move('O-O')
       piece.positionX = squareMap[whiteToPlay ? 'g1' : 'g8'].xPosition
@@ -122,10 +110,10 @@ function clearPossibleMovements(){
       possibleMovementsAnimations[i].visible = false;
       possibleMovementsAnimations.splice(i, 1);
     }
-  }
+}
 
 //returns a list of UIImages representing the square selectors for all the possible moves of parameter piece
-export function displayPosibilities(piece: UIImage){
+function displayPosibilities(piece: UIImage){
     clearPossibleMovements()
     let square:string = getSquare(piece.positionX as string, piece.positionY as string)
     let possibleMoves: string[] = chess.moves({square: square})
@@ -168,10 +156,10 @@ export function displayPosibilities(piece: UIImage){
       })
       possibleMovementsAnimations.push(moveSelector) //add it to the data structure
     }
-  }
+}
 
 //returns the square coordinates depending on the X and Y position provided
-export function getSquare(positionX: string, positionY: string){
+function getSquare(positionX: string, positionY: string){
     let ascii_a: number = 97 //ascii code for 'a'
     let ascii_1: number = 49 //ascii code for '1'
    
@@ -196,7 +184,7 @@ export function getSquare(positionX: string, positionY: string){
 }
 
 //returns the piece(<UIImage>) alive(visible) in whitePieces/blackPieces placed at "square"
-export function getPiece(square: string):UIImage{
+function getPiece(square: string):UIImage{
     let mySquare:ISquare = squareMap[square]
     for(let i = 0; i < whitePieces.length; i++){
         if (whitePieces[i].visible && whitePieces[i].positionX.replace('px','') == mySquare.xPosition && whitePieces[i].positionY.replace('px','') == mySquare.yPosition){
@@ -209,17 +197,6 @@ export function getPiece(square: string):UIImage{
     return whitePieces[0]
 }   
 
-export function getSquareColor(square: string){
-    let column:string = square.charAt(square.length-2)
-    let row:string = square.charAt(square.length-1)
-    let a:number = 97 // 'a' ASCII code
-    let color = 'white'
-    if (((column.charCodeAt(0)-a+1)+parseInt(row))%2 == 0)
-        color = 'black';
-
-    return color    
-}
-
 export const canvasContainer = new UIContainerStack(canvas) //declare parent element
 canvasContainer.adaptWidth = true
 canvasContainer.width = "70%"
@@ -230,7 +207,7 @@ canvasContainer.visible = false
 
 
 //sets all the canvas elements visibility to type's value
-export const board: { [key: string]: UIImage } = {};
+const board: { [key: string]: UIImage } = {};
 let boardBuilt: boolean = false
 let square:string = 'a1' 
 let count:number = 0 //keeps track on whether the square should be black or white
@@ -256,7 +233,7 @@ while (!boardBuilt){
     count++
 }
 
-export const closeButton:UIImage = new UIImage(canvas, new Texture("images/chessboard/close-button.png"))
+const closeButton:UIImage = new UIImage(canvas, new Texture("images/chessboard/close-button.png"))
 closeButton.visible = false
 closeButton.width = 32
 closeButton.height = 32
@@ -477,6 +454,6 @@ blackKing.positionX=squareMap['e8'].xPosition
 blackPieces.push(blackKing)
 
 for(let i=0; i<whitePieces.length;i++){
-    whitePieces[i].width = parseFloat(whitePieces[i].width.replace('px','')) / resizeFactor
-    blackPieces[i].width = parseFloat(blackPieces[i].width.replace('px','')) / resizeFactor
+    whitePieces[i].width = parseFloat(whitePieces[i].width.replace('px','')) // resizeFactor
+    blackPieces[i].width = parseFloat(blackPieces[i].width.replace('px','')) // resizeFactor
 }
